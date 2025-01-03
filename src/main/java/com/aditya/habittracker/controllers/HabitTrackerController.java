@@ -57,7 +57,7 @@ public class HabitTrackerController {
         List<Habit> habits = habitRepository.findAllByUserId(userId);
         List<HabitStatus> response=new ArrayList<>();
         for (Habit habit : habits) {
-            HabitStatus status = habitStatusRepository.findByHabitIdAndDate(habit.getId(),LocalDate.parse(date));
+            HabitStatus status = habitStatusRepository.findByHabitIdAndDate(habit.getId(),LocalDate.parse(date)).get();
             response.add(status);
         }
         return response;
@@ -108,14 +108,17 @@ public class HabitTrackerController {
         return ResponseEntity.ok("Habit status updated!");
     }
 
-    @GetMapping("habits/{habitId}/history")
+    @GetMapping("habits/{userId}/history")
     public List<HabitStatus> getHabitHistory(
-            @PathVariable Long habitId,
+            @PathVariable Long userId,
             @RequestParam String startDate,
             @RequestParam String endDate) {
-        return habitStatusRepository.findByHabitIdAndDateBetween(
-                habitId,
-                LocalDate.parse(startDate),
-                LocalDate.parse(endDate)).stream().toList();
+                List<Habit> habits = habitRepository.findAllByUserId(userId);
+                List<HabitStatus> response=new ArrayList<>();
+                for (Habit habit : habits) {
+                    List<HabitStatus> status = habitStatusRepository.findByHabitIdAndDateBetween(habit.getId(),LocalDate.parse(startDate),LocalDate.parse(endDate)).stream().toList();
+                    response.addAll(status);
+                }
+                return response;
     }
 }

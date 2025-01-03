@@ -12,6 +12,6 @@ public interface HabitStatusRepository extends JpaRepository<HabitStatus, Long> 
 
     Collection<HabitStatus> findByHabitId(Long id);
     Collection<HabitStatus> findByHabitIdAndDateBetween(Long habitId, LocalDate startDate, LocalDate endDate);
-    HabitStatus findByHabitIdAndDate(Long id, LocalDate date);
+    Optional<HabitStatus> findByHabitIdAndDate(Long id, LocalDate date);
 }
 
